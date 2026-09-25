@@ -2,8 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { HuespedResponse, HuespedRequest, EstadoReserva, ESTADO_RESERVA_LABELS } from '../../core/models/huesped.model';
+import { HuespedResponse, HuespedRequest } from '../../core/models/huesped.model';
 import { HuespedService } from '../huesped.service';
+import { TipoDocumento, TIPO_DOCUMENTO_LABELS, TIPOS_DOCUMENTO } from '../../core/models/enums/tipo-documento.enum';
 
 @Component({
   selector: 'app-huesped-form',
@@ -16,8 +17,8 @@ export class HuespedFormComponent implements OnInit {
   guardando = false;
   esEdicion = false;
   form: FormGroup;
-  readonly estadosReserva = Object.values(EstadoReserva);
-  readonly estadoLabels = ESTADO_RESERVA_LABELS;
+  readonly tiposDocumento = TIPOS_DOCUMENTO;
+  readonly tiposDocumentoLabels = TIPO_DOCUMENTO_LABELS;
 
   constructor(
     private fb: FormBuilder,
@@ -30,12 +31,11 @@ export class HuespedFormComponent implements OnInit {
       nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       apellidoPaterno: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       apellidoMaterno: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email, Validators.pattern('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$')]],
-      telefono: ['', [Validators.required]],
-      tipoDocumento: [''],
-      documento: ['', [Validators.required]],
-      nacionalidad: ['', [Validators.required]],
-      estado: ['']
+      email: ['', [Validators.required, Validators.email, Validators.pattern('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$'), Validators.maxLength(100)]],
+      telefono: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.minLength(7), Validators.maxLength(15)]],
+      tipoDocumento: ['', [Validators.required]],
+      documento: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+      nacionalidad: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]]
     });
   }
 
@@ -52,14 +52,21 @@ export class HuespedFormComponent implements OnInit {
         documento: this.data.documento,
         nacionalidad: this.data.nacionalidad
       });
-
-      this.form.get('id')?.disable();
     }
   }
 
   guardar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      return;
+    }
+
+    const accion = this.esEdicion ? 'actualizar' : 'registrar';
+    const mensaje = this.esEdicion
+      ? `¿Está seguro de actualizar al huésped "${this.form.value.nombre} ${this.form.value.apellidoPaterno}"?`
+      : `¿Está seguro de registrar al huésped "${this.form.value.nombre} ${this.form.value.apellidoPaterno}"?`;
+
+    if (!confirm(mensaje)) {
       return;
     }
 
@@ -85,6 +92,13 @@ export class HuespedFormComponent implements OnInit {
 
   cancelar(): void {
     this.dialogRef.close(false);
+  }
+
+  soloNumeros(event: KeyboardEvent): void {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
   }
 
   private mostrarMensaje(mensaje: string): void {

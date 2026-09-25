@@ -75,31 +75,31 @@ export class ReservaService {
     }
   }
 
-  puedeModificarFechas(estado: EstadoReserva): boolean {
+  puedeModificarFechas(estado: string): boolean {
     return estado === EstadoReserva.CONFIRMADA || estado === EstadoReserva.EN_CURSO;
   }
 
-  puedeModificarFechaEntrada(estado: EstadoReserva): boolean {
+  puedeModificarFechaEntrada(estado: string): boolean {
     return estado === EstadoReserva.CONFIRMADA;
   }
 
-  puedeModificarFechaSalida(estado: EstadoReserva): boolean {
+  puedeModificarFechaSalida(estado: string): boolean {
     return estado === EstadoReserva.CONFIRMADA || estado === EstadoReserva.EN_CURSO;
   }
 
-  puedeModificarHabitacion(estado: EstadoReserva): boolean {
+  puedeModificarHabitacion(estado: string): boolean {
     return estado === EstadoReserva.CONFIRMADA;
   }
 
-  puedeCancelar(estado: EstadoReserva): boolean {
+  puedeCancelar(estado: string): boolean {
     return estado === EstadoReserva.CONFIRMADA;
   }
 
-  puedeRealizarCheckIn(estado: EstadoReserva): boolean {
+  puedeRealizarCheckIn(estado: string): boolean {
     return estado === EstadoReserva.CONFIRMADA;
   }
 
-  puedeRealizarCheckOut(estado: EstadoReserva): boolean {
+  puedeRealizarCheckOut(estado: string): boolean {
     return estado === EstadoReserva.EN_CURSO;
   }
 }

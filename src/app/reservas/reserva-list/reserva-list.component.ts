@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { HuespedService } from '../../huespedes/huesped.service';
 import { HuespedResponse } from '../../core/models/huesped.model';
 import { forkJoin } from 'rxjs';
+import { RolePermissionService } from '../../core/services/role-permission.service';
 
 @Component({
   selector: 'app-reserva-list',
@@ -25,7 +26,8 @@ export class ReservaListComponent implements OnInit {
     public reservaService: ReservaService,
     private huespedService: HuespedService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    private rolePermissionService: RolePermissionService
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +59,6 @@ export class ReservaListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.cargarReservas();
-        this.snackBar.open('Reserva creada exitosamente', 'Cerrar', { duration: 3000 });
       }
     });
   }
@@ -71,7 +72,6 @@ export class ReservaListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.cargarReservas();
-        this.snackBar.open('Reserva actualizada exitosamente', 'Cerrar', { duration: 3000 });
       }
     });
   }
@@ -97,6 +97,10 @@ export class ReservaListComponent implements OnInit {
       return;
     }
 
+    if (!confirm(`¿Está seguro de realizar check-in para la reserva #${reserva.id}?`)) {
+      return;
+    }
+
     this.reservaService.checkIn(reserva.id, reserva.numHabitacion).subscribe({
       next: () => {
         this.cargarReservas();
@@ -112,6 +116,10 @@ export class ReservaListComponent implements OnInit {
   checkOut(reserva: ReservaResponse): void {
     if (!this.reservaService.puedeRealizarCheckOut(reserva.estadoReserva)) {
       this.snackBar.open('Solo se puede hacer check-out en reservas en curso', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    if (!confirm(`¿Está seguro de realizar check-out para la reserva #${reserva.id}?`)) {
       return;
     }
 
@@ -148,17 +156,31 @@ export class ReservaListComponent implements OnInit {
   }
 
   nombreHuesped(reserva: ReservaResponse): string {
-    if (reserva.nombreHuesped) {
-      return reserva.nombreHuesped;
-    }
-    const huesped = this.huespedes.find(item => item.id === reserva.idHuesped);
-    if (!huesped) {
-      return 'N/A';
-    }
-    return `${huesped.nombre} ${huesped.apellidoPaterno}`;
+    const huesped = this.huespedes.find(h => h.id === reserva.idHuesped);
+    return huesped ? `${huesped.nombre} ${huesped.apellidoPaterno} ${huesped.apellidoMaterno}` : 'N/A';
   }
 
-  obtenerLabelEstado(estado: EstadoReserva): string {
-    return this.estadoLabels[estado] || estado;
+  obtenerLabelEstado(estado: string): string {
+    return this.estadoLabels[estado as EstadoReserva] || estado;
+  }
+
+  puedeCrear(): boolean {
+    return this.rolePermissionService.puedeCrearReserva();
+  }
+
+  puedeEditar(): boolean {
+    return this.rolePermissionService.puedeEditarReserva();
+  }
+
+  puedeEliminar(): boolean {
+    return this.rolePermissionService.puedeEliminarReserva();
+  }
+
+  puedeRealizarCheckIn(): boolean {
+    return this.rolePermissionService.puedeRealizarCheckIn();
+  }
+
+  puedeRealizarCheckOut(): boolean {
+    return this.rolePermissionService.puedeRealizarCheckOut();
   }
 }

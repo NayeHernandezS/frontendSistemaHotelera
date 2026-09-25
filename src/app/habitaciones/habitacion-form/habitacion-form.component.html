@@ -39,6 +39,9 @@
       <mat-error *ngIf="form.get('precio')?.hasError('max')">
         El precio máximo es $100,000.00
       </mat-error>
+      <mat-hint *ngIf="form.get('precio')?.disabled">
+        Solo administradores pueden modificar precios
+      </mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">

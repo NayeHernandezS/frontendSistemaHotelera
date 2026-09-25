@@ -4,11 +4,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ReservaService } from '../reserva.service';
 import { ReservaRequest, ReservaResponse } from '../../core/models/reserva.model';
-import { EstadoReserva } from '../../core/models/enums/estado-reserva.enum';
+import { EstadoReserva, ESTADO_RESERVA_CODIGOS } from '../../core/models/enums/estado-reserva.enum';
 import { HuespedService } from '../../huespedes/huesped.service';
 import { HabitacionService } from '../../habitaciones/habitacion.service';
 import { HuespedResponse } from '../../core/models/huesped.model';
 import { HabitacionResponse } from '../../core/models/habitacion.model';
+import { DateAdapter } from '@angular/material/core';
 
 interface DialogData {
   mode: 'create' | 'edit';
@@ -28,6 +29,8 @@ export class ReservaFormComponent {
   habitaciones: HabitacionResponse[] = [];
   esEdicion = false;
   readonly EstadoReserva = EstadoReserva;
+  fechaMinima: Date;
+  fechaMinimaSalida: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -36,13 +39,20 @@ export class ReservaFormComponent {
     private reservaService: ReservaService,
     private huespedService: HuespedService,
     private habitacionService: HabitacionService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dateAdapter: DateAdapter<any>
   ) {
+    this.dateAdapter.getFirstDayOfWeek = () => 1;
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    this.fechaMinima = hoy;
+    this.fechaMinimaSalida = hoy;
+
     this.esEdicion = data.mode === 'edit';
     this.form = this.fb.group({
       idHuesped: ['', [Validators.required]],
       numHabitacion: ['', [Validators.required]],
-      estadoReserva: [EstadoReserva.CONFIRMADA, [Validators.required]],
+      estadoReserva: [{value: EstadoReserva.CONFIRMADA, disabled: true}],
       fechaEntrada: ['', [Validators.required]],
       fechaSalida: ['', [Validators.required]]
     });
@@ -55,10 +65,19 @@ export class ReservaFormComponent {
         fechaEntrada: new Date(data.reserva.fecha_Entrada),
         fechaSalida: new Date(data.reserva.fecha_Salida)
       });
+      this.actualizarFechaMinimaSalida(this.form.value.fechaEntrada);
     }
 
     this.cargarHuespedes();
     this.cargarHabitaciones();
+
+    this.form.get('fechaEntrada')?.valueChanges.subscribe((fecha) => {
+      this.actualizarFechaMinimaSalida(fecha);
+    });
+
+    this.form.get('numHabitacion')?.valueChanges.subscribe((nuevaHabitacion) => {
+      this.actualizarFechaMinimaSalida(this.form.value.fechaEntrada);
+    });
   }
 
   cargarHuespedes(): void {
@@ -85,16 +104,36 @@ export class ReservaFormComponent {
     });
   }
 
+  actualizarFechaMinimaSalida(fechaEntrada: Date | null): void {
+    if (fechaEntrada) {
+      const fecha = new Date(fechaEntrada);
+      fecha.setDate(fecha.getDate() + 1);
+      fecha.setHours(0, 0, 0, 0);
+      this.fechaMinimaSalida = fecha;
+    }
+  }
+
   guardar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
+    const accion = this.esEdicion ? 'actualizar' : 'crear';
+    const mensaje = this.esEdicion
+      ? '¿Está seguro de actualizar esta reserva?'
+      : '¿Está seguro de crear esta nueva reserva?';
+
+    if (!confirm(mensaje)) {
+      return;
+    }
+
     this.cargando = true;
     const valor = this.form.getRawValue();
     const request: ReservaRequest = {
-      ...valor,
+      idHuesped: valor.idHuesped,
+      numHabitacion: valor.numHabitacion,
+      estadoReserva: EstadoReserva.CONFIRMADA,
       fechaEntrada: this.aLocalDateTime(valor.fechaEntrada),
       fechaSalida: this.aLocalDateTime(valor.fechaSalida)
     };

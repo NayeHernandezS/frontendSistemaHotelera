@@ -1,13 +1,14 @@
 <div class="reserva-container">
   <div class="header">
     <h1>Gestión de Reservas</h1>
-    <button mat-raised-button color="primary" (click)="crearReserva()">
+    <button mat-raised-button color="primary" (click)="crearReserva()" *ngIf="puedeCrear()">
       <mat-icon>add</mat-icon>
       Nueva Reserva
     </button>
   </div>
 
-  <mat-table [dataSource]="reservas" class="mat-elevation-z8">
+  <div class="table-container">
+    <mat-table [dataSource]="reservas" class="mat-elevation-z8">
     <ng-container matColumnDef="id">
       <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
       <mat-cell *matCellDef="let reserva">{{ reserva.id }}</mat-cell>
@@ -45,19 +46,19 @@
     <ng-container matColumnDef="acciones">
       <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
       <mat-cell *matCellDef="let reserva">
-        <button mat-icon-button (click)="editarReserva(reserva)">
+        <button mat-icon-button (click)="editarReserva(reserva)" *ngIf="puedeEditar()" matTooltip="Editar reserva">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="checkIn(reserva)">
+        <button mat-icon-button (click)="checkIn(reserva)" *ngIf="puedeRealizarCheckIn()" matTooltip="Realizar check-in (estado EN_CURSO)">
           <mat-icon>login</mat-icon>
         </button>
-        <button mat-icon-button (click)="checkOut(reserva)">
+        <button mat-icon-button (click)="checkOut(reserva)" *ngIf="puedeRealizarCheckOut()" matTooltip="Realizar check-out (estado FINALIZADA)">
           <mat-icon>logout</mat-icon>
         </button>
-        <button mat-icon-button (click)="cancelarReserva(reserva)">
+        <button mat-icon-button (click)="cancelarReserva(reserva)" matTooltip="Cancelar reserva (cambiar estado a CANCELADA)">
           <mat-icon>cancel</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="eliminarReserva(reserva.id)">
+        <button mat-icon-button color="warn" (click)="eliminarReserva(reserva.id)" *ngIf="puedeEliminar()" matTooltip="Eliminar reserva (desactivar registro)">
           <mat-icon>delete</mat-icon>
         </button>
       </mat-cell>
@@ -66,6 +67,7 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
+  </div>
 </div>
 
 <style>
@@ -78,6 +80,16 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+mat-table {
+  width: 100%;
+  min-width: 800px;
 }
 
 .estado-badge {

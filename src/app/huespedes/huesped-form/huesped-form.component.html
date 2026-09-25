@@ -58,19 +58,38 @@
       <mat-error *ngIf="form.get('email')?.hasError('pattern')">
         El correo debe tener un dominio válido
       </mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('maxlength')">
+        El email debe tener máximo 100 caracteres
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Teléfono</mat-label>
-      <input matInput formControlName="telefono" placeholder="Ej: 5551234567">
+      <input matInput formControlName="telefono" placeholder="Ej: 5551234567" (keypress)="soloNumeros($event)">
       <mat-error *ngIf="form.get('telefono')?.hasError('required')">
         El teléfono es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('telefono')?.hasError('pattern')">
+        El teléfono solo debe contener números
+      </mat-error>
+      <mat-error *ngIf="form.get('telefono')?.hasError('minlength')">
+        El teléfono debe tener al menos 7 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('telefono')?.hasError('maxlength')">
+        El teléfono debe tener máximo 15 caracteres
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Tipo de Documento</mat-label>
-      <input matInput formControlName="tipoDocumento" placeholder="Ej: INE">
+      <mat-select formControlName="tipoDocumento" required>
+        <mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo">
+          {{ tiposDocumentoLabels[tipo] }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('tipoDocumento')?.hasError('required')">
+        El tipo de documento es requerido
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -78,6 +97,12 @@
       <input matInput formControlName="documento" placeholder="Ej: ABC123456">
       <mat-error *ngIf="form.get('documento')?.hasError('required')">
         El documento es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('documento')?.hasError('minlength')">
+        El documento debe tener al menos 5 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('documento')?.hasError('maxlength')">
+        El documento debe tener máximo 20 caracteres
       </mat-error>
     </mat-form-field>
 
@@ -87,15 +112,12 @@
       <mat-error *ngIf="form.get('nacionalidad')?.hasError('required')">
         La nacionalidad es requerida
       </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Estado de Reserva</mat-label>
-      <mat-select formControlName="estado">
-        <mat-option *ngFor="let estado of estadosReserva" [value]="estado">
-          {{ estadoLabels[estado] }}
-        </mat-option>
-      </mat-select>
+      <mat-error *ngIf="form.get('nacionalidad')?.hasError('minlength')">
+        La nacionalidad debe tener al menos 3 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('nacionalidad')?.hasError('maxlength')">
+        La nacionalidad debe tener máximo 50 caracteres
+      </mat-error>
     </mat-form-field>
   </form>
 </mat-dialog-content>

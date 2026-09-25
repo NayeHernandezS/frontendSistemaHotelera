@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { HuespedResponse, EstadoRegistro, ESTADO_REGISTRO_LABELS } from '../../core/models/huesped.model';
 import { HuespedFormComponent } from '../huesped-form/huesped-form.component';
 import { HuespedService } from '../huesped.service';
+import { RolePermissionService } from '../../core/services/role-permission.service';
 
 @Component({
   selector: 'app-huesped-list',
@@ -22,7 +23,8 @@ export class HuespedListComponent implements OnInit {
   constructor(
     private huespedService: HuespedService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private rolePermissionService: RolePermissionService
   ) { }
 
   ngOnInit(): void {
@@ -59,7 +61,7 @@ export class HuespedListComponent implements OnInit {
   }
 
   eliminar(huesped: HuespedResponse): void {
-    if (!confirm(`¿Eliminar al huésped "${huesped.nombre} ${huesped.apellidoPaterno}"?`)) return;
+    if (!confirm(`¿Está seguro de eliminar al huésped "${huesped.nombre} ${huesped.apellidoPaterno}"? Esta acción no se puede deshacer.`)) return;
 
     this.huespedService.eliminar(huesped.id).subscribe({
       next: () => {
@@ -68,6 +70,10 @@ export class HuespedListComponent implements OnInit {
       },
       error: () => this.mostrarMensaje('Error al eliminar el huésped')
     });
+  }
+
+  puedeEliminar(): boolean {
+    return this.rolePermissionService.puedeEliminarHuesped();
   }
 
   private mostrarMensaje(mensaje: string): void {

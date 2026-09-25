@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsuarioResponse, ROLES, ROL_LABELS, Rol } from '../../core/models/usuario.model';
 import { UsuarioFormComponent } from '../usuario-form/usuario-form.component';
 import { UsuarioService } from '../usuario.service';
+import { RolePermissionService } from '../../core/services/role-permission.service';
 
 @Component({
   selector: 'app-usuario-list',
@@ -23,7 +24,8 @@ export class UsuarioListComponent implements OnInit {
   constructor(
     private usuarioService: UsuarioService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private rolePermissionService: RolePermissionService
   ) { }
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class UsuarioListComponent implements OnInit {
   }
 
   eliminar(usuario: UsuarioResponse): void {
-    if (!confirm(`¿Eliminar al usuario "${usuario.username}"?`)) return;
+    if (!confirm(`¿Está seguro de eliminar al usuario "${usuario.username}"? Esta acción no se puede deshacer.`)) return;
 
     this.usuarioService.eliminar(usuario.username).subscribe({
       next: () => {
@@ -67,6 +69,18 @@ export class UsuarioListComponent implements OnInit {
       },
       error: () => this.mostrarMensaje('Error al eliminar el usuario')
     });
+  }
+
+  puedeCrear(): boolean {
+    return this.rolePermissionService.puedeCrearUsuario();
+  }
+
+  puedeEditar(): boolean {
+    return this.rolePermissionService.puedeEditarUsuario();
+  }
+
+  puedeEliminar(): boolean {
+    return this.rolePermissionService.puedeEliminarUsuario();
   }
 
   private mostrarMensaje(mensaje: string): void {

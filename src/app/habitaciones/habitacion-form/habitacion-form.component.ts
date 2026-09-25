@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HabitacionResponse, HabitacionRequest, TipoHabitacion, TIPO_HABITACION_LABELS, TIPO_HABITACION_CAPACIDAD } from '../../core/models/habitacion.model';
 import { HabitacionService } from '../habitacion.service';
+import { RolePermissionService } from '../../core/services/role-permission.service';
 
 @Component({
   selector: 'app-habitacion-form',
@@ -25,7 +26,8 @@ export class HabitacionFormComponent implements OnInit {
     private habitacionService: HabitacionService,
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<HabitacionFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: HabitacionResponse | null
+    @Inject(MAT_DIALOG_DATA) public data: HabitacionResponse | null,
+    private rolePermissionService: RolePermissionService
   ) {
     this.form = this.fb.group({
       numHabitacion: ['', [Validators.required, Validators.min(1)]],
@@ -54,6 +56,11 @@ export class HabitacionFormComponent implements OnInit {
       if (tipoInicial) {
         this.actualizarValidacionCapacidad(tipoInicial);
       }
+    }
+
+    // Deshabilitar campo de precio si el usuario no tiene permisos
+    if (!this.rolePermissionService.puedeModificarPrecioHabitacion()) {
+      this.form.get('precio')?.disable();
     }
 
     // Agregar listener para actualizar validación de capacidad cuando cambia el tipo
@@ -104,6 +111,16 @@ export class HabitacionFormComponent implements OnInit {
 
     this.guardando = true;
     const request: HabitacionRequest = this.form.getRawValue();
+
+    const accion = this.esEdicion ? 'actualizar' : 'registrar';
+    const mensaje = this.esEdicion
+      ? `¿Está seguro de actualizar la habitación ${request.numHabitacion}?`
+      : `¿Está seguro de registrar la habitación ${request.numHabitacion}?`;
+
+    if (!confirm(mensaje)) {
+      this.guardando = false;
+      return;
+    }
 
     const obs = this.esEdicion
       ? this.habitacionService.actualizar(this.data!.numHabitacion, request)

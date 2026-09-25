@@ -6,6 +6,7 @@ import { HabitacionFormComponent } from '../habitacion-form/habitacion-form.comp
 import { EstadoFormComponent } from '../estado-form/estado-form.component';
 import { TipoFormComponent } from '../tipo-form/tipo-form.component';
 import { HabitacionService } from '../habitacion.service';
+import { RolePermissionService } from '../../core/services/role-permission.service';
 
 @Component({
   selector: 'app-habitacion-list',
@@ -25,7 +26,8 @@ export class HabitacionListComponent implements OnInit {
   constructor(
     private habitacionService: HabitacionService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private rolePermissionService: RolePermissionService
   ) { }
 
   ngOnInit(): void {
@@ -66,6 +68,10 @@ export class HabitacionListComponent implements OnInit {
   }
 
   cambiarEstado(habitacion: HabitacionResponse): void {
+    if (!confirm(`¿Está seguro de cambiar el estado de la habitación ${habitacion.numHabitacion}?`)) {
+      return;
+    }
+
     const ref = this.dialog.open(EstadoFormComponent, {
       width: '400px',
       data: habitacion
@@ -77,6 +83,10 @@ export class HabitacionListComponent implements OnInit {
   }
 
   cambiarTipo(habitacion: HabitacionResponse): void {
+    if (!confirm(`¿Está seguro de cambiar el tipo de la habitación ${habitacion.numHabitacion}?`)) {
+      return;
+    }
+
     const ref = this.dialog.open(TipoFormComponent, {
       width: '450px',
       data: habitacion
@@ -88,7 +98,7 @@ export class HabitacionListComponent implements OnInit {
   }
 
   eliminar(habitacion: HabitacionResponse): void {
-    if (!confirm(`¿Eliminar la habitación "${habitacion.numHabitacion}"?`)) return;
+    if (!confirm(`¿Está seguro de eliminar la habitación "${habitacion.numHabitacion}"? Esta acción no se puede deshacer.`)) return;
 
     this.habitacionService.eliminar(habitacion.numHabitacion).subscribe({
       next: () => {
@@ -97,6 +107,26 @@ export class HabitacionListComponent implements OnInit {
       },
       error: () => this.mostrarMensaje('Error al eliminar la habitación')
     });
+  }
+
+  puedeCrear(): boolean {
+    return this.rolePermissionService.puedeCrearHabitacion();
+  }
+
+  puedeEditar(): boolean {
+    return this.rolePermissionService.puedeEditarHabitacion();
+  }
+
+  puedeEliminar(): boolean {
+    return this.rolePermissionService.puedeEliminarHabitacion();
+  }
+
+  puedeCambiarEstado(): boolean {
+    return this.rolePermissionService.puedeCambiarEstadoHabitacion();
+  }
+
+  puedeCambiarTipo(): boolean {
+    return this.rolePermissionService.puedeEditarHabitacion();
   }
 
   private mostrarMensaje(mensaje: string): void {

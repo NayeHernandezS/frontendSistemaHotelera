@@ -18,7 +18,14 @@
       <mat-label>Habitación</mat-label>
       <mat-select formControlName="numHabitacion" required>
         <mat-option *ngFor="let habitacion of habitaciones" [value]="habitacion.numHabitacion">
-          Habitación {{ habitacion.numHabitacion }} - {{ habitacion.tipo }}
+          <div class="habitacion-option">
+            <span class="habitacion-numero">Habitación {{ habitacion.numHabitacion }}</span>
+            <span class="habitacion-tipo">{{ habitacion.tipo }}</span>
+            <span class="habitacion-precio">${{ habitacion.precio }}/noche</span>
+            <span class="habitacion-estado" [class.estado-disponible]="habitacion.estado === 'DISPONIBLE'" [class.estado-ocupada]="habitacion.estado === 'OCUPADA'">
+              {{ habitacion.estadoDescripcion }}
+            </span>
+          </div>
         </mat-option>
       </mat-select>
       <mat-error *ngIf="form.get('numHabitacion')?.hasError('required')">
@@ -28,7 +35,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Estado</mat-label>
-      <mat-select formControlName="estadoReserva" required [disabled]="esEdicion">
+      <mat-select formControlName="estadoReserva" required>
         <mat-option [value]="EstadoReserva.CONFIRMADA">Confirmada</mat-option>
         <mat-option [value]="EstadoReserva.EN_CURSO">En Curso</mat-option>
         <mat-option [value]="EstadoReserva.FINALIZADA">Finalizada</mat-option>
@@ -41,21 +48,27 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de Entrada</mat-label>
-      <input matInput [matDatepicker]="fechaEntradaPicker" formControlName="fechaEntrada" required>
+      <input matInput [matDatepicker]="fechaEntradaPicker" formControlName="fechaEntrada" required [min]="fechaMinima">
       <mat-datepicker-toggle matSuffix [for]="fechaEntradaPicker"></mat-datepicker-toggle>
       <mat-datepicker #fechaEntradaPicker></mat-datepicker>
       <mat-error *ngIf="form.get('fechaEntrada')?.hasError('required')">
         La fecha de entrada es requerida
       </mat-error>
+      <mat-error *ngIf="form.get('fechaEntrada')?.hasError('matDatepickerMin')">
+        La fecha de entrada no puede ser en el pasado
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de Salida</mat-label>
-      <input matInput [matDatepicker]="fechaSalidaPicker" formControlName="fechaSalida" required>
+      <input matInput [matDatepicker]="fechaSalidaPicker" formControlName="fechaSalida" required [min]="fechaMinimaSalida">
       <mat-datepicker-toggle matSuffix [for]="fechaSalidaPicker"></mat-datepicker-toggle>
       <mat-datepicker #fechaSalidaPicker></mat-datepicker>
       <mat-error *ngIf="form.get('fechaSalida')?.hasError('required')">
         La fecha de salida es requerida
+      </mat-error>
+      <mat-error *ngIf="form.get('fechaSalida')?.hasError('matDatepickerMin')">
+        La fecha de salida debe ser posterior a la fecha de entrada
       </mat-error>
     </mat-form-field>
   </div>
@@ -85,5 +98,45 @@
   display: inline-block;
   margin-right: 8px;
   vertical-align: middle;
+}
+
+.habitacion-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  gap: 12px;
+}
+
+.habitacion-numero {
+  font-weight: 600;
+  color: #333;
+}
+
+.habitacion-tipo {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.habitacion-precio {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.habitacion-estado {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.estado-disponible {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.estado-ocupada {
+  background-color: #ffebee;
+  color: #c62828;
 }
 </style>

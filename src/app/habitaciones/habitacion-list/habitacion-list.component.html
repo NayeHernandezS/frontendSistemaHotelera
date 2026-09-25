@@ -1,7 +1,7 @@
 <div class="habitacion-container">
   <div class="header">
     <h1>Gestión de Habitaciones</h1>
-    <button mat-raised-button color="primary" (click)="abrirFormulario()">
+    <button mat-raised-button color="primary" (click)="abrirFormulario()" *ngIf="puedeCrear()">
       <mat-icon>add</mat-icon>
       Nueva Habitación
     </button>
@@ -40,16 +40,16 @@
     <ng-container matColumnDef="acciones">
       <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
       <mat-cell *matCellDef="let habitacion">
-        <button mat-icon-button color="primary" (click)="abrirFormulario(habitacion)" matTooltip="Editar">
+        <button mat-icon-button color="primary" (click)="abrirFormulario(habitacion)" matTooltip="Editar" *ngIf="puedeEditar()">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="primary" (click)="cambiarTipo(habitacion)" matTooltip="Cambiar Tipo">
+        <button mat-icon-button color="primary" (click)="cambiarTipo(habitacion)" matTooltip="Cambiar Tipo" *ngIf="puedeCambiarTipo()">
           <mat-icon>hotel</mat-icon>
         </button>
-        <button mat-icon-button color="accent" (click)="cambiarEstado(habitacion)" matTooltip="Cambiar Estado">
+        <button mat-icon-button color="accent" (click)="cambiarEstado(habitacion)" matTooltip="Cambiar Estado" *ngIf="puedeCambiarEstado()">
           <mat-icon>swap_horiz</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="eliminar(habitacion)" matTooltip="Eliminar">
+        <button mat-icon-button color="warn" (click)="eliminar(habitacion)" matTooltip="Eliminar" *ngIf="puedeEliminar()">
           <mat-icon>delete</mat-icon>
         </button>
       </mat-cell>

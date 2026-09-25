@@ -1,3 +1,5 @@
+import { TipoDocumento } from './enums/tipo-documento.enum';
+
 export enum EstadoRegistro {
   ACTIVO = 'ACTIVO',
   ELIMINADO = 'ELIMINADO'
@@ -28,10 +30,9 @@ export interface HuespedRequest {
   apellidoMaterno: string;
   email: string;
   telefono: string;
-  tipoDocumento: string;
+  tipoDocumento: TipoDocumento;
   documento: string;
   nacionalidad: string;
-  estado?: EstadoReserva;
 }
 
 export interface HuespedResponse {
@@ -41,7 +42,7 @@ export interface HuespedResponse {
   apellidoMaterno: string;
   email: string;
   telefono: string;
-  tipoDocumento: string;
+  tipoDocumento: TipoDocumento;
   documento: string;
   nacionalidad: string;
   estado: EstadoRegistro;

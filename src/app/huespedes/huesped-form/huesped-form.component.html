@@ -1,0 +1,109 @@
+<h2 mat-dialog-title>
+  {{ esEdicion ? 'Editar Huésped' : 'Nuevo Huésped' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" placeholder="Ej: Juan">
+      <mat-error *ngIf="form.get('nombre')?.hasError('required')">
+        El nombre es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('nombre')?.hasError('minlength')">
+        El nombre debe tener al menos 2 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('nombre')?.hasError('maxlength')">
+        El nombre debe tener máximo 50 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apellido Paterno</mat-label>
+      <input matInput formControlName="apellidoPaterno" placeholder="Ej: Pérez">
+      <mat-error *ngIf="form.get('apellidoPaterno')?.hasError('required')">
+        El apellido paterno es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('apellidoPaterno')?.hasError('minlength')">
+        El apellido paterno debe tener al menos 2 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('apellidoPaterno')?.hasError('maxlength')">
+        El apellido paterno debe tener máximo 50 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apellido Materno</mat-label>
+      <input matInput formControlName="apellidoMaterno" placeholder="Ej: López">
+      <mat-error *ngIf="form.get('apellidoMaterno')?.hasError('required')">
+        El apellido materno es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('apellidoMaterno')?.hasError('minlength')">
+        El apellido materno debe tener al menos 2 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('apellidoMaterno')?.hasError('maxlength')">
+        El apellido materno debe tener máximo 50 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="Ej: juan@email.com">
+      <mat-error *ngIf="form.get('email')?.hasError('required')">
+        El email es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('email')">
+        El formato del email no es válido
+      </mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('pattern')">
+        El correo debe tener un dominio válido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="telefono" placeholder="Ej: 5551234567">
+      <mat-error *ngIf="form.get('telefono')?.hasError('required')">
+        El teléfono es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tipo de Documento</mat-label>
+      <input matInput formControlName="tipoDocumento" placeholder="Ej: INE">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Número de Documento</mat-label>
+      <input matInput formControlName="documento" placeholder="Ej: ABC123456">
+      <mat-error *ngIf="form.get('documento')?.hasError('required')">
+        El documento es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nacionalidad</mat-label>
+      <input matInput formControlName="nacionalidad" placeholder="Ej: MEXICANA">
+      <mat-error *ngIf="form.get('nacionalidad')?.hasError('required')">
+        La nacionalidad es requerida
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado de Reserva</mat-label>
+      <mat-select formControlName="estado">
+        <mat-option *ngFor="let estado of estadosReserva" [value]="estado">
+          {{ estadoLabels[estado] }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()" [disabled]="guardando">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="guardando">
+    <mat-spinner *ngIf="guardando" diameter="20"></mat-spinner>
+    <span *ngIf="!guardando">{{ esEdicion ? 'Actualizar' : 'Guardar' }}</span>
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,36 @@
+.full-width {
+  width: 100%;
+}
+
+.info-box {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+.warning-box {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  .warning-icon {
+    color: #ffc107;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #856404;
+  }
+}

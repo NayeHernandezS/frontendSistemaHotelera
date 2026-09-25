@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>
+  Cambiar Estado de Habitación {{ data.numHabitacion }}
+</h2>
+
+<mat-dialog-content>
+  <div class="estado-actual">
+    <p><strong>Estado actual:</strong> {{ getEstadoLabel(data.estado) }}</p>
+  </div>
+
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nuevo Estado</mat-label>
+      <mat-select formControlName="estado">
+        <mat-option *ngFor="let estado of estadosHabitacion" [value]="estado">
+          {{ getEstadoLabel(estado) }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('estado')?.hasError('required')">
+        El estado es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <div class="info-reglas" *ngIf="data.estado === 'OCUPADA'">
+      <mat-icon>info</mat-icon>
+      <p>Desde estado OCUPADA no puedes ir directamente a DISPONIBLE. Debes pasar por LIMPIEZA primero.</p>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()" [disabled]="guardando">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="guardando">
+    <mat-spinner *ngIf="guardando" diameter="20"></mat-spinner>
+    <span *ngIf="!guardando">Actualizar Estado</span>
+  </button>
+</mat-dialog-actions>

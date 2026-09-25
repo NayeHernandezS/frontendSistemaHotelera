@@ -1,0 +1,69 @@
+<div class="huesped-container">
+  <div class="header">
+    <h1>Gestión de Huéspedes</h1>
+    <button mat-raised-button color="primary" (click)="abrirFormulario()">
+      <mat-icon>add</mat-icon>
+      Nuevo Huésped
+    </button>
+  </div>
+
+  <mat-table [dataSource]="huespedes" class="mat-elevation-z8" *ngIf="!cargando">
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+      <mat-cell *matCellDef="let huesped">{{ huesped.id }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="nombre">
+      <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+      <mat-cell *matCellDef="let huesped">{{ huesped.nombre }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="apellidoPaterno">
+      <mat-header-cell *matHeaderCellDef>Apellido Paterno</mat-header-cell>
+      <mat-cell *matCellDef="let huesped">{{ huesped.apellidoPaterno }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+      <mat-cell *matCellDef="let huesped">{{ huesped.email }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="telefono">
+      <mat-header-cell *matHeaderCellDef>Teléfono</mat-header-cell>
+      <mat-cell *matCellDef="let huesped">{{ huesped.telefono }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="estado">
+      <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
+      <mat-cell *matCellDef="let huesped">
+        <span [class]="'estado-' + huesped.estado.toLowerCase()">
+          {{ getEstadoLabel(huesped.estado) }}
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let huesped">
+        <button mat-icon-button color="primary" (click)="abrirFormulario(huesped)" matTooltip="Editar">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="eliminar(huesped)" matTooltip="Eliminar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columnas"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columnas;"></mat-row>
+  </mat-table>
+
+  <div class="loading" *ngIf="cargando">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando huéspedes...</p>
+  </div>
+
+  <div class="no-data" *ngIf="!cargando && huespedes.length === 0">
+    <p>No hay huéspedes registrados</p>
+  </div>
+</div>

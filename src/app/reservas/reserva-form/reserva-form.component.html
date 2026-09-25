@@ -1,0 +1,89 @@
+<h2 mat-dialog-title>{{ esEdicion ? 'Editar Reserva' : 'Nueva Reserva' }}</h2>
+
+<mat-dialog-content [formGroup]="form">
+  <div class="form-container">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Huésped</mat-label>
+      <mat-select formControlName="idHuesped" required>
+        <mat-option *ngFor="let huesped of huespedes" [value]="huesped.id">
+          {{ huesped.nombre }} {{ huesped.apellidoPaterno }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('idHuesped')?.hasError('required')">
+        El huésped es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Habitación</mat-label>
+      <mat-select formControlName="numHabitacion" required>
+        <mat-option *ngFor="let habitacion of habitaciones" [value]="habitacion.numHabitacion">
+          Habitación {{ habitacion.numHabitacion }} - {{ habitacion.tipo }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('numHabitacion')?.hasError('required')">
+        La habitación es requerida
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="estadoReserva" required [disabled]="esEdicion">
+        <mat-option [value]="EstadoReserva.CONFIRMADA">Confirmada</mat-option>
+        <mat-option [value]="EstadoReserva.EN_CURSO">En Curso</mat-option>
+        <mat-option [value]="EstadoReserva.FINALIZADA">Finalizada</mat-option>
+        <mat-option [value]="EstadoReserva.CANCELADA">Cancelada</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('estadoReserva')?.hasError('required')">
+        El estado es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de Entrada</mat-label>
+      <input matInput [matDatepicker]="fechaEntradaPicker" formControlName="fechaEntrada" required>
+      <mat-datepicker-toggle matSuffix [for]="fechaEntradaPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fechaEntradaPicker></mat-datepicker>
+      <mat-error *ngIf="form.get('fechaEntrada')?.hasError('required')">
+        La fecha de entrada es requerida
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de Salida</mat-label>
+      <input matInput [matDatepicker]="fechaSalidaPicker" formControlName="fechaSalida" required>
+      <mat-datepicker-toggle matSuffix [for]="fechaSalidaPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fechaSalidaPicker></mat-datepicker>
+      <mat-error *ngIf="form.get('fechaSalida')?.hasError('required')">
+        La fecha de salida es requerida
+      </mat-error>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="cargando">
+    <mat-spinner *ngIf="cargando" diameter="20" class="spinner"></mat-spinner>
+    {{ esEdicion ? 'Actualizar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>
+
+<style>
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 400px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.spinner {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+</style>

@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>
+  {{ esEdicion ? 'Editar Habitación' : 'Nueva Habitación' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Número de Habitación</mat-label>
+      <input matInput type="number" formControlName="numHabitacion" placeholder="Ej: 101">
+      <mat-error *ngIf="form.get('numHabitacion')?.hasError('required')">
+        El número de habitación es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('numHabitacion')?.hasError('min')">
+        El número de habitación debe ser mayor a 0
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tipo de Habitación</mat-label>
+      <mat-select formControlName="tipo">
+        <mat-option *ngFor="let tipo of tiposHabitacion" [value]="tipo">
+          {{ tipoLabels[tipo] }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('tipo')?.hasError('required')">
+        El tipo de habitación es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Precio</mat-label>
+      <input matInput type="number" step="0.01" formControlName="precio" placeholder="Ej: 150.00">
+      <mat-error *ngIf="form.get('precio')?.hasError('required')">
+        El precio es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('precio')?.hasError('min')">
+        El precio debe ser mayor a $0.01
+      </mat-error>
+      <mat-error *ngIf="form.get('precio')?.hasError('max')">
+        El precio máximo es $100,000.00
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Capacidad</mat-label>
+      <input matInput type="number" formControlName="capacidad" placeholder="Ej: 2">
+      <mat-error *ngIf="form.get('capacidad')?.hasError('required')">
+        La capacidad es requerida
+      </mat-error>
+      <mat-error *ngIf="form.get('capacidad')?.hasError('min')">
+        {{ obtenerMensajeCapacidadMin() }}
+      </mat-error>
+      <mat-error *ngIf="form.get('capacidad')?.hasError('max')">
+        {{ obtenerMensajeCapacidadMax() }}
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()" [disabled]="guardando">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="guardando">
+    <mat-spinner *ngIf="guardando" diameter="20"></mat-spinner>
+    <span *ngIf="!guardando">{{ esEdicion ? 'Actualizar' : 'Guardar' }}</span>
+  </button>
+</mat-dialog-actions>

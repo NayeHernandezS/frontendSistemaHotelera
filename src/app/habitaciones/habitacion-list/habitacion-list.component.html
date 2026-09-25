@@ -1,0 +1,70 @@
+<div class="habitacion-container">
+  <div class="header">
+    <h1>Gestión de Habitaciones</h1>
+    <button mat-raised-button color="primary" (click)="abrirFormulario()">
+      <mat-icon>add</mat-icon>
+      Nueva Habitación
+    </button>
+  </div>
+
+  <mat-table [dataSource]="habitaciones" class="mat-elevation-z8" *ngIf="!cargando">
+    <ng-container matColumnDef="numHabitacion">
+      <mat-header-cell *matHeaderCellDef>Número</mat-header-cell>
+      <mat-cell *matCellDef="let habitacion">{{ habitacion.numHabitacion }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="tipo">
+      <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+      <mat-cell *matCellDef="let habitacion">{{ getTipoLabel(habitacion.tipo) }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="precio">
+      <mat-header-cell *matHeaderCellDef>Precio</mat-header-cell>
+      <mat-cell *matCellDef="let habitacion">${{ habitacion.precio }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="capacidad">
+      <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
+      <mat-cell *matCellDef="let habitacion">{{ habitacion.capacidad }} personas</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="estado">
+      <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
+      <mat-cell *matCellDef="let habitacion">
+        <span [class]="'estado-' + habitacion.estado.toLowerCase()">
+          {{ getEstadoLabel(habitacion.estado) }}
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let habitacion">
+        <button mat-icon-button color="primary" (click)="abrirFormulario(habitacion)" matTooltip="Editar">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" (click)="cambiarTipo(habitacion)" matTooltip="Cambiar Tipo">
+          <mat-icon>hotel</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="cambiarEstado(habitacion)" matTooltip="Cambiar Estado">
+          <mat-icon>swap_horiz</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="eliminar(habitacion)" matTooltip="Eliminar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columnas"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columnas;"></mat-row>
+  </mat-table>
+
+  <div class="loading" *ngIf="cargando">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando habitaciones...</p>
+  </div>
+
+  <div class="no-data" *ngIf="!cargando && habitaciones.length === 0">
+    <p>No hay habitaciones registradas</p>
+  </div>
+</div>

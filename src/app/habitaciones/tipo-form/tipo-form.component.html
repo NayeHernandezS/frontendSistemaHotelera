@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>
+  Cambiar Tipo de Habitación {{ data.numHabitacion }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <div class="info-box">
+      <p><strong>Tipo actual:</strong> {{ getTipoLabel(data.tipo) }}</p>
+      <p><strong>Capacidad actual:</strong> {{ data.capacidad }} huésped{{ data.capacidad > 1 ? 'es' : '' }}</p>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nuevo Tipo de Habitación</mat-label>
+      <mat-select formControlName="tipo">
+        <mat-option *ngFor="let tipo of tiposHabitacion" [value]="tipo">
+          {{ tipoLabels[tipo] }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('tipo')?.hasError('required')">
+        El tipo de habitación es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <div class="warning-box" *ngIf="form.get('tipo')?.value && form.get('tipo')?.value !== data.tipo">
+      <mat-icon class="warning-icon">warning</mat-icon>
+      <p>
+        Al cambiar el tipo, se validará que la capacidad actual ({{ data.capacidad }}) sea válida para el nuevo tipo.
+      </p>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()" [disabled]="guardando">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="guardando">
+    <mat-spinner *ngIf="guardando" diameter="20"></mat-spinner>
+    <span *ngIf="!guardando">Cambiar Tipo</span>
+  </button>
+</mat-dialog-actions>

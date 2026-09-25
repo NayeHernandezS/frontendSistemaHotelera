@@ -1,0 +1,40 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.estado-actual {
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 20px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.info-reglas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #fff3cd;
+  border-radius: 4px;
+  margin-top: 15px;
+
+  mat-icon {
+    color: #856404;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #856404;
+  }
+}
+
+mat-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}

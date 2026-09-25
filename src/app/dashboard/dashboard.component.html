@@ -1,0 +1,97 @@
+<h1 class="titulo-pagina">Panel de Control</h1>
+<p class="subtitulo">Resumen general del sistema de reservas hoteleras</p>
+
+<div class="grid-cards">
+
+  <!-- Reservas -->
+  <mat-card class="card-metrica">
+    <mat-card-content>
+      <mat-icon class="icono">calendar_month</mat-icon>
+      <div>
+        <p class="numero">{{ cargando ? '—' : totalReservas }}</p>
+        <p class="etiqueta">Total Reservas</p>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-button color="primary" routerLink="/reservas">Ver reservas</a>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Habitaciones -->
+  <mat-card class="card-metrica">
+    <mat-card-content>
+      <mat-icon class="icono" color="accent">bed</mat-icon>
+      <div>
+        <p class="numero">{{ cargando ? '—' : totalHabitaciones }}</p>
+        <p class="etiqueta">Habitaciones disponibles</p>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-button color="accent" routerLink="/habitaciones">Ver habitaciones</a>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Huéspedes -->
+  <mat-card class="card-metrica">
+    <mat-card-content>
+      <mat-icon class="icono" color="primary">people</mat-icon>
+      <div>
+        <p class="numero">{{ cargando ? '—' : totalHuespedes }}</p>
+        <p class="etiqueta">Huéspedes registrados</p>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-button color="primary" routerLink="/huespedes">Ver huéspedes</a>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Usuarios (solo admin) -->
+  <mat-card class="card-metrica" *ngIf="isAdmin">
+    <mat-card-content>
+      <mat-icon class="icono" color="primary">manage_accounts</mat-icon>
+      <div>
+        <p class="numero">{{ cargando ? '—' : totalUsuarios }}</p>
+        <p class="etiqueta">Usuarios registrados</p>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-button color="primary" routerLink="/usuarios">Ver usuarios</a>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<!-- Detalles de reservas por estado -->
+<div class="reservas-detalle" *ngIf="totalReservas > 0">
+  <h2>Estado de Reservas</h2>
+  <div class="grid-estados">
+
+    <mat-card class="card-estado confirmada">
+      <mat-card-content>
+        <p class="numero">{{ reservasConfirmadas }}</p>
+        <p class="etiqueta">Confirmadas</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card-estado en-curso">
+      <mat-card-content>
+        <p class="numero">{{ reservasEnCurso }}</p>
+        <p class="etiqueta">En Curso</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card-estado finalizada">
+      <mat-card-content>
+        <p class="numero">{{ reservasFinalizadas }}</p>
+        <p class="etiqueta">Finalizadas</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card-estado cancelada">
+      <mat-card-content>
+        <p class="numero">{{ reservasCanceladas }}</p>
+        <p class="etiqueta">Canceladas</p>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

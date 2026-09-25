@@ -1,0 +1,109 @@
+<div class="reserva-container">
+  <div class="header">
+    <h1>Gestión de Reservas</h1>
+    <button mat-raised-button color="primary" (click)="crearReserva()">
+      <mat-icon>add</mat-icon>
+      Nueva Reserva
+    </button>
+  </div>
+
+  <mat-table [dataSource]="reservas" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+      <mat-cell *matCellDef="let reserva">{{ reserva.id }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="huesped">
+      <mat-header-cell *matHeaderCellDef>Huésped</mat-header-cell>
+      <mat-cell *matCellDef="let reserva">{{ nombreHuesped(reserva) }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="habitacion">
+      <mat-header-cell *matHeaderCellDef>Habitación</mat-header-cell>
+      <mat-cell *matCellDef="let reserva">{{ reserva.numHabitacion }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="estado">
+      <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
+      <mat-cell *matCellDef="let reserva">
+        <span [class]="'estado-badge ' + reserva.estadoReserva.toLowerCase()">
+          {{ obtenerLabelEstado(reserva.estadoReserva) }}
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaEntrada">
+      <mat-header-cell *matHeaderCellDef>Fecha Entrada</mat-header-cell>
+      <mat-cell *matCellDef="let reserva">{{ reserva.fecha_Entrada | date:'dd/MM/yyyy HH:mm' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaSalida">
+      <mat-header-cell *matHeaderCellDef>Fecha Salida</mat-header-cell>
+      <mat-cell *matCellDef="let reserva">{{ reserva.fecha_Salida | date:'dd/MM/yyyy HH:mm' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let reserva">
+        <button mat-icon-button (click)="editarReserva(reserva)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="checkIn(reserva)">
+          <mat-icon>login</mat-icon>
+        </button>
+        <button mat-icon-button (click)="checkOut(reserva)">
+          <mat-icon>logout</mat-icon>
+        </button>
+        <button mat-icon-button (click)="cancelarReserva(reserva)">
+          <mat-icon>cancel</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="eliminarReserva(reserva.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>
+
+<style>
+.reserva-container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.estado-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.estado-badge.confirmada {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.estado-badge.en_curso {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.estado-badge.finalizada {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.estado-badge.cancelada {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+</style>
